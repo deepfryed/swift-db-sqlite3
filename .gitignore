@@ -1,0 +1,7 @@
+ext/swift/db/sqlite3/*
+!ext/swift/db/sqlite3/*.rb
+!ext/swift/db/sqlite3/*.c
+!ext/swift/db/sqlite3/*.h
+pkg/
+tmp/
+*.gem
