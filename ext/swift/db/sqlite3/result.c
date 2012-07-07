@@ -119,13 +119,12 @@ VALUE db_sqlite3_result_consume(VALUE self) {
         for (n = 0; n < sqlite3_column_count(r->s); n++) {
             switch (sqlite3_column_type(r->s, n)) {
                 case SQLITE_NULL:
-                    printf("n: %d null\n", n);
                     rb_ary_push(row, Qnil);
                     break;
                 case SQLITE_TEXT:
                 case SQLITE_BLOB:
                     data = sqlite3_column_blob(r->s, n);
-                    rb_ary_push(row, typecast_string(data ? data : "", sqlite3_column_bytes(r->s, n)));
+                    rb_ary_push(row, typecast_detect(data, strlen(data), NUM2INT(rb_ary_entry(r->types, n))));
                     break;
                 default:
                     data = sqlite3_column_text(r->s, n);
