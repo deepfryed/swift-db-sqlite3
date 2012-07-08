@@ -37,14 +37,14 @@ Result* db_sqlite3_result_handle(VALUE self) {
 
 void db_sqlite3_result_mark(Result *r) {
     if (r) {
-        if (r->statement)
-            rb_gc_mark(r->statement);
-        if (r->fields)
-            rb_gc_mark(r->fields);
-        if (r->types)
-            rb_gc_mark(r->types);
-        if (r->rows)
-            rb_gc_mark(r->rows);
+        if (!NIL_P(r->statement))
+            rb_gc_mark_maybe(r->statement);
+        if (!NIL_P(r->fields))
+            rb_gc_mark_maybe(r->fields);
+        if (!NIL_P(r->types))
+            rb_gc_mark_maybe(r->types);
+        if (!NIL_P(r->rows))
+            rb_gc_mark_maybe(r->rows);
     }
 }
 
@@ -61,12 +61,12 @@ VALUE db_sqlite3_result_initialize(VALUE self, VALUE statement) {
     Result *r    = db_sqlite3_result_handle(self);
     Statement *s = db_sqlite3_statement_handle(statement);
 
-    r->statement = statement;
-    r->s         = s->s;
-    r->c         = s->c;
     r->fields    = rb_ary_new();
     r->types     = rb_ary_new();
     r->rows      = rb_ary_new();
+    r->statement = statement;
+    r->s         = s->s;
+    r->c         = s->c;
     r->affected  = 0;
 
     return self;

@@ -5,3 +5,5 @@ ext/swift/db/sqlite3/*
 pkg/
 tmp/
 *.gem
+benchmarks/gems/*
+benchmarks/.bundle/*
