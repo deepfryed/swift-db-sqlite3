@@ -5,7 +5,7 @@ $:.unshift File.dirname(__FILE__) + '/../lib'
 
 require 'bundler/setup'
 require 'sqlite3'
-require 'swift/db/sqlite3'
+require 'swift-db-sqlite3'
 require 'benchmark'
 
 dbs = {
