@@ -6,5 +6,6 @@
 
 #include "common.h"
 #include "statement.h"
+#include "typecast.h"
 
 void init_swift_db_sqlite3_result();

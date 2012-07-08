@@ -3,6 +3,7 @@
 // (c) Bharanee Rathna 2012
 
 #include "statement.h"
+#include "typecast.h"
 
 /* declaration */
 

@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include "common.h"
+
 #define SWIFT_TYPE_INT       0
 #define SWIFT_TYPE_FLOAT     1
 #define SWIFT_TYPE_NUMERIC   2
@@ -15,8 +17,8 @@
 #define SWIFT_TYPE_BLOB      8
 #define SWIFT_TYPE_UNKNOWN   9
 
-VALUE typecast_to_string(VALUE);
-VALUE typecast_string(const char *, size_t);
-VALUE typecast_detect(const char *, size_t, int);
-VALUE typecast_description(VALUE list);
-void  init_swift_db_sqlite3_typecast();
+DLL_PRIVATE VALUE typecast_to_string(VALUE);
+DLL_PRIVATE VALUE typecast_string(const char *, size_t);
+DLL_PRIVATE VALUE typecast_detect(const char *, size_t, int);
+DLL_PRIVATE VALUE typecast_description(VALUE list);
+DLL_PRIVATE void  init_swift_db_sqlite3_typecast();
