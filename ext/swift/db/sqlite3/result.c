@@ -180,6 +180,11 @@ VALUE db_sqlite3_result_types(VALUE self) {
     return typecast_description(r->types);
 }
 
+VALUE db_sqlite3_result_insert_id(VALUE self) {
+    Result *r = db_sqlite3_result_handle(self);
+    return SIZET2NUM(sqlite3_last_insert_rowid(r->c));
+}
+
 void init_swift_db_sqlite3_result() {
     rb_require("bigdecimal");
     rb_require("stringio");
@@ -195,4 +200,5 @@ void init_swift_db_sqlite3_result() {
     rb_define_method(cDSR, "affected_rows", db_sqlite3_result_affected_rows, 0);
     rb_define_method(cDSR, "fields",        db_sqlite3_result_fields,        0);
     rb_define_method(cDSR, "types",         db_sqlite3_result_types,         0);
+    rb_define_method(cDSR, "insert_id",     db_sqlite3_result_insert_id,     0);
 }
