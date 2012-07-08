@@ -54,13 +54,18 @@ VALUE db_sqlite3_adapter_initialize(VALUE self, VALUE options) {
 }
 
 VALUE db_sqlite3_adapter_execute(int argc, VALUE *argv, VALUE self) {
-    VALUE sql, bind, statement;
+    VALUE sql, bind;
     rb_scan_args(argc, argv, "10*", &sql, &bind);
+
     return db_sqlite3_statement_execute(
-        1,
-        &bind,
+        RARRAY_LEN(bind),
+        RARRAY_PTR(bind),
         db_sqlite3_statement_initialize(db_sqlite3_statement_allocate(cDSS), self, sql)
     );
+}
+
+VALUE db_sqlite3_adapter_prepare(VALUE self, VALUE sql) {
+    return db_sqlite3_statement_initialize(db_sqlite3_statement_allocate(cDSS), self, sql);
 }
 
 VALUE db_sqlite3_adapter_begin(int argc, VALUE *argv, VALUE self) {
@@ -183,6 +188,7 @@ void init_swift_db_sqlite3_adapter() {
     rb_define_alloc_func(cDSA, db_sqlite3_adapter_allocate);
 
     rb_define_method(cDSA, "initialize",  db_sqlite3_adapter_initialize,   1);
+    rb_define_method(cDSA, "prepare",     db_sqlite3_adapter_prepare,      1);
     rb_define_method(cDSA, "execute",     db_sqlite3_adapter_execute,     -1);
     rb_define_method(cDSA, "begin",       db_sqlite3_adapter_begin,       -1);
     rb_define_method(cDSA, "commit",      db_sqlite3_adapter_commit,      -1);

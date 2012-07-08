@@ -12,6 +12,7 @@ Adapter* db_sqlite3_adapter_handle(VALUE);
 VALUE    db_sqlite3_result_allocate(VALUE);
 VALUE    db_sqlite3_result_initialize(VALUE, VALUE);
 VALUE    db_sqlite3_result_consume(VALUE);
+VALUE    db_sqlite3_result_each(VALUE);
 
 /* definition */
 
@@ -64,8 +65,7 @@ VALUE db_sqlite3_statement_execute(int argc, VALUE *argv, VALUE self) {
 
     Statement *s = db_sqlite3_statement_handle(self);
 
-    rb_scan_args(argc, argv, "01", &bind);
-
+    rb_scan_args(argc, argv, "00*", &bind);
     expect = sqlite3_bind_parameter_count(s->s);
     if (expect != RARRAY_LEN(bind))
         rb_raise(eSwiftArgumentError, "expected %d bind values got %d", expect, RARRAY_LEN(bind));
