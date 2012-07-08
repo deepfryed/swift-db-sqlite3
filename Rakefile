@@ -16,7 +16,7 @@ $gemspec = Gem::Specification.new do |s|
   s.homepage          = 'http://github.com/deepfryed/swift-db-sqlite3'
   s.files             = Dir['ext/**/*.{c,h}'] + Dir['{ext,test,lib}/**/*.rb'] + %w(README.md CHANGELOG)
   s.extensions        = %w(ext/swift/db/sqlite3/extconf.rb)
-  s.require_paths     = %w(lib)
+  s.require_paths     = %w(lib ext)
 
   s.add_development_dependency('rake')
 end

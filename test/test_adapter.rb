@@ -31,6 +31,8 @@ describe 'sqlite3 adapter' do
     assert_equal 0, result.selected_rows
     assert_equal 0, result.affected_rows
 
+    assert_equal 1, db.execute('select count(*) as count from users').first[:count]
+
     result = db.execute('delete from users')
     assert_equal 0, result.selected_rows
     assert_equal 1, result.affected_rows

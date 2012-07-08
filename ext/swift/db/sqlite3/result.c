@@ -98,7 +98,7 @@ VALUE db_sqlite3_result_consume(VALUE self) {
         {SWIFT_TYPE_UNKNOWN,    "unknown"}
     };
 
-
+    int lazy_types = 0;
     size_t ntypes = sizeof(types) / sizeof(Type);
 
     rb_ary_clear(r->fields);
@@ -109,8 +109,14 @@ VALUE db_sqlite3_result_consume(VALUE self) {
         rb_ary_push(r->fields, ID2SYM(rb_intern(sqlite3_column_name(r->s, n))));
 
         type = sqlite3_column_decltype(r->s, n);
+        if (!type) {
+            lazy_types = 1;
+            rb_ary_push(r->types, INT2NUM(SWIFT_TYPE_UNKNOWN));
+            continue;
+        }
+
         for (i = 0; i < (int)ntypes; i++) {
-            if (strcmp(type, types[i].definition) == 0 || types[i].value == 9) {
+            if (strcmp(type, types[i].definition) == 0 || types[i].value == SWIFT_TYPE_UNKNOWN) {
                 rb_ary_push(r->types, INT2NUM(types[i].value));
                 break;
             }
@@ -121,6 +127,26 @@ VALUE db_sqlite3_result_consume(VALUE self) {
 
     while ((rc = sqlite3_step(r->s)) == SQLITE_ROW) {
         VALUE row = rb_ary_new();
+
+        /* type determination of aggregrations can only be determined after a row is pulled out */
+        if (lazy_types) {
+            for (n = 0; n < RARRAY_LEN(r->types); n++) {
+                if (NUM2INT(rb_ary_entry(r->types, n)) == SWIFT_TYPE_UNKNOWN) {
+                    switch(sqlite3_column_type(r->s, n)) {
+                        case SQLITE_INTEGER:
+                            rb_ary_store(r->types, n, INT2NUM(SWIFT_TYPE_INT)); break;
+                        case SQLITE_FLOAT:
+                            rb_ary_store(r->types, n, INT2NUM(SWIFT_TYPE_FLOAT)); break;
+                        case SQLITE_BLOB:
+                            rb_ary_store(r->types, n, INT2NUM(SWIFT_TYPE_BLOB)); break;
+                        default:
+                            rb_ary_store(r->types, n, INT2NUM(SWIFT_TYPE_TEXT));
+                    }
+                }
+            }
+            lazy_types = 0;
+        }
+
         for (n = 0; n < sqlite3_column_count(r->s); n++) {
             switch (sqlite3_column_type(r->s, n)) {
                 case SQLITE_NULL:
