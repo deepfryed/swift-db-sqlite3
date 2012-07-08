@@ -13,6 +13,7 @@ typedef struct Result {
     VALUE statement;
     sqlite3* c;
     sqlite3_stmt *s;
+    size_t affected;
 } Result;
 
 typedef struct Type {
@@ -66,6 +67,7 @@ VALUE db_sqlite3_result_initialize(VALUE self, VALUE statement) {
     r->fields    = rb_ary_new();
     r->types     = rb_ary_new();
     r->rows      = rb_ary_new();
+    r->affected  = 0;
 
     return self;
 }
@@ -96,6 +98,7 @@ VALUE db_sqlite3_result_consume(VALUE self) {
         {SWIFT_TYPE_UNKNOWN,    "unknown"}
     };
 
+
     size_t ntypes = sizeof(types) / sizeof(Type);
 
     rb_ary_clear(r->fields);
@@ -113,6 +116,8 @@ VALUE db_sqlite3_result_consume(VALUE self) {
             }
         }
     }
+
+    r->affected = sqlite3_total_changes(r->c);
 
     while ((rc = sqlite3_step(r->s)) == SQLITE_ROW) {
         VALUE row = rb_ary_new();
@@ -137,6 +142,8 @@ VALUE db_sqlite3_result_consume(VALUE self) {
     if (rc != SQLITE_DONE)
         rb_raise(eSwiftRuntimeError, "%s\nSQL: %s", sqlite3_errmsg(r->c), sqlite3_sql(r->s));
 
+    r->affected = sqlite3_total_changes(r->c) - r->affected;
+
     return self;
 }
 
@@ -153,14 +160,14 @@ VALUE db_sqlite3_result_each(VALUE self) {
     }
 }
 
-VALUE db_sqlite3_result_rows(VALUE self) {
+VALUE db_sqlite3_result_selected_rows(VALUE self) {
     Result *r = db_sqlite3_result_handle(self);
     return SIZET2NUM(RARRAY_LEN(r->rows));
 }
 
-VALUE db_sqlite3_result_columns(VALUE self) {
+VALUE db_sqlite3_result_affected_rows(VALUE self) {
     Result *r = db_sqlite3_result_handle(self);
-    return INT2NUM(RARRAY_LEN(r->fields));
+    return SIZET2NUM(r->affected);
 }
 
 VALUE db_sqlite3_result_fields(VALUE self) {
@@ -168,7 +175,7 @@ VALUE db_sqlite3_result_fields(VALUE self) {
     return r->fields;
 }
 
-VALUE db_sqlite3_result_field_types(VALUE self) {
+VALUE db_sqlite3_result_types(VALUE self) {
     Result *r = db_sqlite3_result_handle(self);
     return typecast_description(r->types);
 }
@@ -182,10 +189,10 @@ void init_swift_db_sqlite3_result() {
 
     rb_include_module(cDSR, rb_mEnumerable);
     rb_define_alloc_func(cDSR, db_sqlite3_result_allocate);
-    rb_define_method(cDSR, "initialize",  db_sqlite3_result_initialize,  1);
-    rb_define_method(cDSR, "each",        db_sqlite3_result_each,        0);
-    rb_define_method(cDSR, "rows",        db_sqlite3_result_rows,        0);
-    rb_define_method(cDSR, "columns",     db_sqlite3_result_columns,     0);
-    rb_define_method(cDSR, "fields",      db_sqlite3_result_fields,      0);
-    rb_define_method(cDSR, "field_types", db_sqlite3_result_field_types, 0);
+    rb_define_method(cDSR, "initialize",    db_sqlite3_result_initialize,    1);
+    rb_define_method(cDSR, "each",          db_sqlite3_result_each,          0);
+    rb_define_method(cDSR, "selected_rows", db_sqlite3_result_selected_rows, 0);
+    rb_define_method(cDSR, "affected_rows", db_sqlite3_result_affected_rows, 0);
+    rb_define_method(cDSR, "fields",        db_sqlite3_result_fields,        0);
+    rb_define_method(cDSR, "types",         db_sqlite3_result_types,         0);
 }

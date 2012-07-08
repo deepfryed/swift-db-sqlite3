@@ -16,15 +16,23 @@ describe 'sqlite3 adapter' do
 
     result = db.execute('select * from users')
 
-    assert_equal 1, result.rows
-    assert_equal 4, result.columns
+    assert_equal 1, result.selected_rows
+    assert_equal 0, result.affected_rows
     assert_equal %w(id name age created_at).map(&:to_sym), result.fields
-    assert_equal %w(integer text integer timestamp), result.field_types
+    assert_equal %w(integer text integer timestamp), result.types
 
     row = result.first
     assert_equal 1,      row[:id]
     assert_equal 'test', row[:name]
     assert_equal nil,    row[:age]
     assert_equal now,    row[:created_at].to_time
+
+    result = db.execute('delete from users where id = 0')
+    assert_equal 0, result.selected_rows
+    assert_equal 0, result.affected_rows
+
+    result = db.execute('delete from users')
+    assert_equal 0, result.selected_rows
+    assert_equal 1, result.affected_rows
   end
 end

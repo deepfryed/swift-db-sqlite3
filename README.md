@@ -20,10 +20,10 @@ is not considered to be stable.
     #insert_id
 
   Swift::DB::Sqlite3::Result
-    #rows
-    #columns
+    #selected_rows
+    #affected_rows
     #fields
-    #field_types
+    #types
     #each
     #insert_id
 ```
