@@ -15,10 +15,10 @@ void Init_swift_db_sqlite3_ext() {
     mSwift = rb_define_module("Swift");
     mDB    = rb_define_module_under(mSwift, "DB");
 
-    eSwiftError           = rb_define_class("SwiftError", rb_eStandardError);
-    eSwiftArgumentError   = rb_define_class("SwiftArgumentError",   eSwiftError);
-    eSwiftRuntimeError    = rb_define_class("SwiftRuntimeError",    eSwiftError);
-    eSwiftConnectionError = rb_define_class("SwiftConnectionError", eSwiftError);
+    eSwiftError           = rb_define_class_under(mSwift, "Error",           rb_eStandardError);
+    eSwiftArgumentError   = rb_define_class_under(mSwift, "ArgumentError",   eSwiftError);
+    eSwiftRuntimeError    = rb_define_class_under(mSwift, "RuntimeError",    eSwiftError);
+    eSwiftConnectionError = rb_define_class_under(mSwift, "ConnectionError", eSwiftError);
 
     init_swift_db_sqlite3_adapter();
     init_swift_db_sqlite3_statement();

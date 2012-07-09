@@ -9,7 +9,7 @@
 
 VALUE cDSS;
 
-Adapter* db_sqlite3_adapter_handle(VALUE);
+Adapter* db_sqlite3_adapter_handle_safe(VALUE);
 VALUE    db_sqlite3_result_allocate(VALUE);
 VALUE    db_sqlite3_result_initialize(VALUE, VALUE);
 VALUE    db_sqlite3_result_consume(VALUE);
@@ -46,7 +46,7 @@ VALUE db_sqlite3_statement_initialize(VALUE self, VALUE adapter, VALUE sql) {
     Statement *s = db_sqlite3_statement_handle(self);
 
     s->s       = 0;
-    s->c       = db_sqlite3_adapter_handle(adapter)->connection;
+    s->c       = db_sqlite3_adapter_handle_safe(adapter)->connection;
     s->adapter = adapter;
 
     if (sqlite3_prepare_v2(s->c, RSTRING_PTR(sql), RSTRING_LEN(sql), &(s->s), 0) != SQLITE_OK)

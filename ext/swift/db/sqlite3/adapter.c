@@ -19,6 +19,13 @@ Adapter* db_sqlite3_adapter_handle(VALUE self) {
     return a;
 }
 
+Adapter* db_sqlite3_adapter_handle_safe(VALUE self) {
+    Adapter *a = db_sqlite3_adapter_handle(self);
+    if (!a->connection)
+        rb_raise(eSwiftConnectionError, "sqlite3 database is not open");
+    return a;
+}
+
 VALUE db_sqlite3_adapter_deallocate(Adapter *a) {
     if (a && a->connection)
         sqlite3_close(a->connection);
@@ -46,7 +53,7 @@ VALUE db_sqlite3_adapter_initialize(VALUE self, VALUE options) {
     if (NIL_P(db))
         rb_raise(eSwiftConnectionError, "Invalid db name");
 
-    if (sqlite3_open_v2(RSTRING_PTR(db), &connection, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, 0) != SQLITE_OK)
+    if (sqlite3_open_v2(CSTRING(db), &connection, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, 0) != SQLITE_OK)
        rb_raise(eSwiftConnectionError, "%s", sqlite3_errmsg(connection));
 
     a->connection = connection;
@@ -73,7 +80,7 @@ VALUE db_sqlite3_adapter_begin(int argc, VALUE *argv, VALUE self) {
     VALUE savepoint, sql;
     char command[256];
 
-    Adapter *a = db_sqlite3_adapter_handle(self);
+    Adapter *a = db_sqlite3_adapter_handle_safe(self);
     rb_scan_args(argc, argv, "01", &savepoint);
 
     if (a->t_nesting == 0) {
@@ -87,7 +94,7 @@ VALUE db_sqlite3_adapter_begin(int argc, VALUE *argv, VALUE self) {
     if (NIL_P(savepoint))
         savepoint = rb_uuid_string();
 
-    snprintf(command, 256, "savepoint %s", RSTRING_PTR(savepoint));
+    snprintf(command, 256, "savepoint %s", CSTRING(savepoint));
     sql = rb_str_new2(command);
     db_sqlite3_adapter_execute(1, &sql, self);
     a->t_nesting++;
@@ -98,7 +105,7 @@ VALUE db_sqlite3_adapter_commit(int argc, VALUE *argv, VALUE self) {
     VALUE savepoint, sql;
     char command[256];
 
-    Adapter *a = db_sqlite3_adapter_handle(self);
+    Adapter *a = db_sqlite3_adapter_handle_safe(self);
     rb_scan_args(argc, argv, "01", &savepoint);
 
     if (a->t_nesting == 0)
@@ -110,7 +117,7 @@ VALUE db_sqlite3_adapter_commit(int argc, VALUE *argv, VALUE self) {
         a->t_nesting--;
     }
     else {
-        snprintf(command, 256, "release savepoint %s", RSTRING_PTR(savepoint));
+        snprintf(command, 256, "release savepoint %s", CSTRING(savepoint));
         sql = rb_str_new2(command);
         db_sqlite3_adapter_execute(1, &sql, self);
         a->t_nesting--;
@@ -122,7 +129,7 @@ VALUE db_sqlite3_adapter_rollback(int argc, VALUE *argv, VALUE self) {
     VALUE savepoint, sql;
     char command[256];
 
-    Adapter *a = db_sqlite3_adapter_handle(self);
+    Adapter *a = db_sqlite3_adapter_handle_safe(self);
     rb_scan_args(argc, argv, "01", &savepoint);
 
     if (a->t_nesting == 0)
@@ -134,7 +141,7 @@ VALUE db_sqlite3_adapter_rollback(int argc, VALUE *argv, VALUE self) {
         a->t_nesting--;
     }
     else {
-        snprintf(command, 256, "rollback to savepoint %s", RSTRING_PTR(savepoint));
+        snprintf(command, 256, "rollback to savepoint %s", CSTRING(savepoint));
         sql = rb_str_new2(command);
         db_sqlite3_adapter_execute(1, &sql, self);
         a->t_nesting--;
@@ -146,7 +153,7 @@ VALUE db_sqlite3_adapter_transaction(int argc, VALUE *argv, VALUE self) {
     int status;
     VALUE savepoint, block, block_result;
 
-    Adapter *a = db_sqlite3_adapter_handle(self);
+    Adapter *a = db_sqlite3_adapter_handle_safe(self);
     rb_scan_args(argc, argv, "01&", &savepoint, &block);
 
     if (NIL_P(block))
@@ -183,6 +190,21 @@ VALUE db_sqlite3_adapter_transaction(int argc, VALUE *argv, VALUE self) {
     return block_result;
 }
 
+VALUE db_sqlite3_adapter_close(VALUE self) {
+    Adapter *a = db_sqlite3_adapter_handle(self);
+    if (a->connection) {
+        sqlite3_close(a->connection);
+        a->connection = 0;
+        return Qtrue;
+    }
+    return Qfalse;
+}
+
+VALUE db_sqlite3_adapter_closed_q(VALUE self) {
+    Adapter *a = db_sqlite3_adapter_handle(self);
+    return a->connection ? Qfalse : Qtrue;
+}
+
 void init_swift_db_sqlite3_adapter() {
     cDSA = rb_define_class_under(mDB, "Sqlite3", rb_cObject);
     rb_define_alloc_func(cDSA, db_sqlite3_adapter_allocate);
@@ -194,4 +216,6 @@ void init_swift_db_sqlite3_adapter() {
     rb_define_method(cDSA, "commit",      db_sqlite3_adapter_commit,      -1);
     rb_define_method(cDSA, "rollback",    db_sqlite3_adapter_rollback,    -1);
     rb_define_method(cDSA, "transaction", db_sqlite3_adapter_transaction, -1);
+    rb_define_method(cDSA, "close",       db_sqlite3_adapter_close,        0);
+    rb_define_method(cDSA, "closed?",     db_sqlite3_adapter_closed_q,     0);
 }

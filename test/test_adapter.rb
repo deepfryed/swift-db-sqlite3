@@ -9,6 +9,10 @@ describe 'sqlite3 adapter' do
     assert db.execute("select name from sqlite_master")
   end
 
+  it 'should expect the correct number of bind args' do
+    assert_raises(Swift::ArgumentError) { db.execute("select * from sqlite_master where name = ?", 1, 2) }
+  end
+
   it 'should return result on #execute' do
     now = Time.now
     assert db.execute('create table users (id integer primary key, name text, age integer, created_at timestamp)')
@@ -36,5 +40,13 @@ describe 'sqlite3 adapter' do
     result = db.execute('delete from users')
     assert_equal 0, result.selected_rows
     assert_equal 1, result.affected_rows
+  end
+
+  it 'should close handle' do
+    assert !db.closed?
+    assert db.close
+    assert db.closed?
+
+    assert_raises(Swift::ConnectionError) { db.execute("select * from users") }
   end
 end
