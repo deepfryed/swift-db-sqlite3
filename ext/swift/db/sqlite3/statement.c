@@ -92,5 +92,4 @@ void init_swift_db_sqlite3_statement() {
     rb_define_alloc_func(cDSS, db_sqlite3_statement_allocate);
     rb_define_method(cDSS, "initialize", db_sqlite3_statement_initialize, 2);
     rb_define_method(cDSS, "execute",    db_sqlite3_statement_execute,   -1);
-    rb_define_method(cDSS, "insert_id",  db_sqlite3_statement_insert_id,  0);
 }
