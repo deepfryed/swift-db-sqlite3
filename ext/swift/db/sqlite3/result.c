@@ -14,6 +14,7 @@ typedef struct Result {
     sqlite3* c;
     sqlite3_stmt *s;
     size_t affected;
+    size_t insert_id;
 } Result;
 
 typedef struct Type {
@@ -168,7 +169,8 @@ VALUE db_sqlite3_result_consume(VALUE self) {
     if (rc != SQLITE_DONE)
         rb_raise(eSwiftRuntimeError, "%s\nSQL: %s", sqlite3_errmsg(r->c), sqlite3_sql(r->s));
 
-    r->affected = sqlite3_total_changes(r->c) - r->affected;
+    r->affected  = sqlite3_total_changes(r->c) - r->affected;
+    r->insert_id = sqlite3_last_insert_rowid(r->c);
 
     return self;
 }
@@ -208,7 +210,7 @@ VALUE db_sqlite3_result_types(VALUE self) {
 
 VALUE db_sqlite3_result_insert_id(VALUE self) {
     Result *r = db_sqlite3_result_handle(self);
-    return SIZET2NUM(sqlite3_last_insert_rowid(r->c));
+    return SIZET2NUM(r->insert_id);
 }
 
 void init_swift_db_sqlite3_result() {
