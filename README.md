@@ -17,7 +17,6 @@ is not considered to be stable.
   Swift::DB::Sqlite3::Statement
     .new(Swift::DB::Sqlite3, sql)
     #execute(*bind)
-    #insert_id
 
   Swift::DB::Sqlite3::Result
     #selected_rows
