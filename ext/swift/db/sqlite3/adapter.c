@@ -205,6 +205,15 @@ VALUE db_sqlite3_adapter_closed_q(VALUE self) {
     return a->connection ? Qfalse : Qtrue;
 }
 
+VALUE db_sqlite3_adapter_escape(VALUE self, VALUE text) {
+    VALUE escaped;
+    Adapter *a = db_sqlite3_adapter_handle_safe(self);
+    char *sqlite3_escaped = sqlite3_mprintf("%q", CSTRING(text));
+    escaped = rb_str_new2(sqlite3_escaped);
+    sqlite3_free(sqlite3_escaped);
+    return escaped;
+}
+
 void init_swift_db_sqlite3_adapter() {
     cDSA = rb_define_class_under(mDB, "Sqlite3", rb_cObject);
     rb_define_alloc_func(cDSA, db_sqlite3_adapter_allocate);
@@ -218,4 +227,5 @@ void init_swift_db_sqlite3_adapter() {
     rb_define_method(cDSA, "transaction", db_sqlite3_adapter_transaction, -1);
     rb_define_method(cDSA, "close",       db_sqlite3_adapter_close,        0);
     rb_define_method(cDSA, "closed?",     db_sqlite3_adapter_closed_q,     0);
+    rb_define_method(cDSA, "escape",      db_sqlite3_adapter_escape,       1);
 }

@@ -15,6 +15,7 @@ MRI adapter for sqlite3 for use in Swift ORM.
     #transaction(savepoint = nil, &block)
     #close
     #closed?
+    #escape(text)
 
   Swift::DB::Sqlite3::Statement
     .new(Swift::DB::Sqlite3, sql)
