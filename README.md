@@ -1,7 +1,6 @@
 # Swift Sqlite3 adapter
 
-MRI adapter for sqlite3 for use in Swift ORM. This is an experimental rewrite of the Swift adapters and the API
-is not considered to be stable.
+MRI adapter for sqlite3 for use in Swift ORM.
 
 ## API
 
@@ -9,10 +8,13 @@ is not considered to be stable.
   Swift::DB::Sqlite3
     .new(options)
     #execute(sql, *bind)
+    #prepare(sql)
     #begin(savepoint = nil)
     #commit(savepoint = nil)
     #rollback(savepoint = nil)
     #transaction(savepoint = nil, &block)
+    #close
+    #closed?
 
   Swift::DB::Sqlite3::Statement
     .new(Swift::DB::Sqlite3, sql)

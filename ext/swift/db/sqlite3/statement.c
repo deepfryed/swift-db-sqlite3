@@ -66,6 +66,9 @@ VALUE db_sqlite3_statement_execute(int argc, VALUE *argv, VALUE self) {
 
     Statement *s = db_sqlite3_statement_handle(self);
 
+    sqlite3_reset(s->s);
+    sqlite3_clear_bindings(s->s);
+
     rb_scan_args(argc, argv, "00*", &bind);
     expect = sqlite3_bind_parameter_count(s->s);
     if (expect != RARRAY_LEN(bind))
