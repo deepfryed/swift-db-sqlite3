@@ -20,6 +20,7 @@ MRI adapter for sqlite3 for use in Swift ORM.
   Swift::DB::Sqlite3::Statement
     .new(Swift::DB::Sqlite3, sql)
     #execute(*bind)
+    #release
 
   Swift::DB::Sqlite3::Result
     #selected_rows

@@ -50,13 +50,16 @@ describe 'sqlite3 adapter' do
     assert_raises(Swift::ConnectionError) { db.execute("select * from users") }
   end
 
-  it 'should prepare statement' do
+  it 'should prepare & release statement' do
     assert db.execute("create table users(id integer primary key, name text)")
     assert db.execute("insert into users (name) values (?)", "test")
     assert s = db.prepare("select * from users where id > ?")
 
     assert_equal 1, s.execute(0).selected_rows
     assert_equal 0, s.execute(1).selected_rows
+
+    assert s.release
+    assert_raises(Swift::RuntimeError) { s.execute(1) }
   end
 
   it 'should escape whatever' do

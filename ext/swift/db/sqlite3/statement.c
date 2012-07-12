@@ -25,6 +25,13 @@ Statement* db_sqlite3_statement_handle(VALUE self) {
     return s;
 }
 
+Statement* db_sqlite3_statement_handle_safe(VALUE self) {
+    Statement *s = db_sqlite3_statement_handle(self);
+    if (!s->s)
+        rb_raise(eSwiftRuntimeError, "Statement instance not allocated or has been released");
+    return s;
+}
+
 void db_sqlite3_statement_mark(Statement *s) {
     if (s && !NIL_P(s->adapter))
         rb_gc_mark_maybe(s->adapter);
@@ -56,7 +63,7 @@ VALUE db_sqlite3_statement_initialize(VALUE self, VALUE adapter, VALUE sql) {
 }
 
 VALUE db_sqlite3_statement_insert_id(VALUE self) {
-    Statement *s = db_sqlite3_statement_handle(self);
+    Statement *s = db_sqlite3_statement_handle_safe(self);
     return SIZET2NUM(sqlite3_last_insert_rowid(s->c));
 }
 
@@ -64,7 +71,7 @@ VALUE db_sqlite3_statement_execute(int argc, VALUE *argv, VALUE self) {
     int expect, n;
     VALUE bind, result;
 
-    Statement *s = db_sqlite3_statement_handle(self);
+    Statement *s = db_sqlite3_statement_handle_safe(self);
 
     sqlite3_reset(s->s);
     sqlite3_clear_bindings(s->s);
@@ -90,9 +97,17 @@ VALUE db_sqlite3_statement_execute(int argc, VALUE *argv, VALUE self) {
     return result;
 }
 
+VALUE db_sqlite3_statement_release(VALUE self) {
+    Statement *s = db_sqlite3_statement_handle_safe(self);
+    sqlite3_finalize(s->s);
+    s->s = 0;
+    return Qtrue;
+}
+
 void init_swift_db_sqlite3_statement() {
     cDSS = rb_define_class_under(cDSA, "Statement", rb_cObject);
     rb_define_alloc_func(cDSS, db_sqlite3_statement_allocate);
     rb_define_method(cDSS, "initialize", db_sqlite3_statement_initialize, 2);
     rb_define_method(cDSS, "execute",    db_sqlite3_statement_execute,   -1);
+    rb_define_method(cDSS, "release",    db_sqlite3_statement_release,    0);
 }
