@@ -156,7 +156,7 @@ VALUE db_sqlite3_result_consume(VALUE self) {
                 case SQLITE_TEXT:
                 case SQLITE_BLOB:
                     data = sqlite3_column_blob(r->s, n);
-                    rb_ary_push(row, typecast_detect(data, strlen(data), NUM2INT(rb_ary_entry(r->types, n))));
+                    rb_ary_push(row, typecast_detect(data, sqlite3_column_bytes(r->s, n), NUM2INT(rb_ary_entry(r->types, n))));
                     break;
                 default:
                     data = sqlite3_column_text(r->s, n);
