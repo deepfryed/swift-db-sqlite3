@@ -171,6 +171,7 @@ VALUE db_sqlite3_result_consume(VALUE self) {
 
     r->affected  = sqlite3_total_changes(r->c) - r->affected;
     r->insert_id = sqlite3_last_insert_rowid(r->c);
+    sqlite3_reset(r->s);
 
     return self;
 }
