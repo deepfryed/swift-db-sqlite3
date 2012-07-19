@@ -46,6 +46,7 @@ VALUE db_sqlite3_statement_deallocate(Statement *s) {
 
 VALUE db_sqlite3_statement_allocate(VALUE klass) {
     Statement *s = (Statement*)malloc(sizeof(Statement));
+    memset(s, 0, sizeof(Statement));
     return Data_Wrap_Struct(klass, db_sqlite3_statement_mark, db_sqlite3_statement_deallocate, s);
 }
 

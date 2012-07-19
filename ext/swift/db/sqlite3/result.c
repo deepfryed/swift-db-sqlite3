@@ -55,6 +55,7 @@ VALUE db_sqlite3_result_deallocate(Result *r) {
 
 VALUE db_sqlite3_result_allocate(VALUE klass) {
     Result *r = (Result*)malloc(sizeof(Result));
+    memset(r, 0, sizeof(Result));
     return Data_Wrap_Struct(klass, db_sqlite3_result_mark, db_sqlite3_result_deallocate, r);
 }
 
@@ -180,6 +181,8 @@ VALUE db_sqlite3_result_each(VALUE self) {
     int n, f;
     Result *r = db_sqlite3_result_handle(self);
 
+    if (!r->rows) return Qnil;
+
     for (n = 0; n < RARRAY_LEN(r->rows); n++) {
         VALUE tuple = rb_hash_new();
         VALUE row   = rb_ary_entry(r->rows, n);
@@ -191,7 +194,7 @@ VALUE db_sqlite3_result_each(VALUE self) {
 
 VALUE db_sqlite3_result_selected_rows(VALUE self) {
     Result *r = db_sqlite3_result_handle(self);
-    return SIZET2NUM(RARRAY_LEN(r->rows));
+    return r->rows ? SIZET2NUM(RARRAY_LEN(r->rows)) : INT2NUM(0);
 }
 
 VALUE db_sqlite3_result_affected_rows(VALUE self) {
@@ -201,12 +204,12 @@ VALUE db_sqlite3_result_affected_rows(VALUE self) {
 
 VALUE db_sqlite3_result_fields(VALUE self) {
     Result *r = db_sqlite3_result_handle(self);
-    return r->fields;
+    return r->fields ? r->fields : rb_ary_new();
 }
 
 VALUE db_sqlite3_result_types(VALUE self) {
     Result *r = db_sqlite3_result_handle(self);
-    return typecast_description(r->types);
+    return r->types ? typecast_description(r->types) : rb_ary_new();
 }
 
 VALUE db_sqlite3_result_insert_id(VALUE self) {
