@@ -2,6 +2,13 @@
 
 MRI adapter for sqlite3 for use in Swift ORM.
 
+## Features
+
+* Lightweight & fast
+* Result typecasting
+* Prepared statements
+* Nested transactions
+
 ## API
 
 ```
@@ -29,6 +36,21 @@ MRI adapter for sqlite3 for use in Swift ORM.
     #types
     #each
     #insert_id
+```
+
+## Example
+
+```ruby
+require 'swift/db/sqlite3'
+
+db = Swift::DB::Sqlite3.new(db: ':memory:')
+
+db.execute('drop table if exists users')
+db.execute('create table users (id integer primary key, name text, age integer, created_at datetime)')
+db.execute('insert into users(name, age, created_at) values(?, ?, ?)', 'test', 30, Time.now.utc)
+
+row = db.execute('select * from users').first
+p row #=> {:id => 1, :name => 'test', :age => 30, :created_at=> #<Swift::DateTime>}
 ```
 
 ## License
