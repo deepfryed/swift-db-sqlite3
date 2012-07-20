@@ -53,6 +53,24 @@ row = db.execute('select * from users').first
 p row #=> {:id => 1, :name => 'test', :age => 30, :created_at=> #<Swift::DateTime>}
 ```
 
+## Performance
+
+Don't read too much into it. Each library has its advantages and disadvantages.
+
+```
+# insert 1000 rows and read them back 100 times with typecasting enabled.
+
+                           user     system      total        real
+do_sqlite3 insert      0.050000   0.020000   0.070000 (  0.062814)
+do_sqlite3 select      0.720000   0.000000   0.720000 (  0.723628)
+
+sqlite3 insert         0.040000   0.000000   0.040000 (  0.046895)
+sqlite3 select         4.390000   0.000000   4.390000 (  4.400678)
+
+swift insert           0.030000   0.000000   0.030000 (  0.030628)
+swift select           0.480000   0.000000   0.480000 (  0.488608)
+```
+
 ## License
 
 MIT

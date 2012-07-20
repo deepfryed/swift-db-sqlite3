@@ -1,2 +1,3 @@
 source :rubygems
 gem 'sqlite3'
+gem 'do_sqlite3'
