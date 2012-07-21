@@ -60,6 +60,11 @@ Don't read too much into it. Each library has its advantages and disadvantages.
 ```
 # insert 1000 rows and read them back 100 times with typecasting enabled.
 
+$ ruby -v
+
+ruby 1.9.3p125 (2012-02-16 revision 34643) [x86_64-linux]
+
+$ ruby check.rb
                            user     system      total        real
 do_sqlite3 insert      0.050000   0.020000   0.070000 (  0.062814)
 do_sqlite3 select      0.720000   0.000000   0.720000 (  0.723628)
