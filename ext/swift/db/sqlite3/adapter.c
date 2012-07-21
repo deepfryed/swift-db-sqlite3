@@ -205,6 +205,11 @@ VALUE db_sqlite3_adapter_closed_q(VALUE self) {
     return a->connection ? Qfalse : Qtrue;
 }
 
+VALUE db_sqlite3_adapter_ping(VALUE self) {
+    Adapter *a = db_sqlite3_adapter_handle(self);
+    return a->connection ? Qtrue : Qfalse;
+}
+
 VALUE db_sqlite3_adapter_escape(VALUE self, VALUE text) {
     VALUE escaped;
     Adapter *a = db_sqlite3_adapter_handle_safe(self);
@@ -225,6 +230,7 @@ void init_swift_db_sqlite3_adapter() {
     rb_define_method(cDSA, "commit",      db_sqlite3_adapter_commit,      -1);
     rb_define_method(cDSA, "rollback",    db_sqlite3_adapter_rollback,    -1);
     rb_define_method(cDSA, "transaction", db_sqlite3_adapter_transaction, -1);
+    rb_define_method(cDSA, "ping",        db_sqlite3_adapter_ping,         0);
     rb_define_method(cDSA, "close",       db_sqlite3_adapter_close,        0);
     rb_define_method(cDSA, "closed?",     db_sqlite3_adapter_closed_q,     0);
     rb_define_method(cDSA, "escape",      db_sqlite3_adapter_escape,       1);

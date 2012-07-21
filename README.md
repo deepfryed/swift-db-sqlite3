@@ -20,6 +20,7 @@ MRI adapter for sqlite3 for use in Swift ORM.
     #commit(savepoint = nil)
     #rollback(savepoint = nil)
     #transaction(savepoint = nil, &block)
+    #ping
     #close
     #closed?
     #escape(text)

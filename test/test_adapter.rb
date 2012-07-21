@@ -43,9 +43,11 @@ describe 'sqlite3 adapter' do
   end
 
   it 'should close handle' do
+    assert db.ping
     assert !db.closed?
     assert db.close
     assert db.closed?
+    assert !db.ping
 
     assert_raises(Swift::ConnectionError) { db.execute("select * from users") }
   end
