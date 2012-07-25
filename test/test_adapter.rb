@@ -67,4 +67,11 @@ describe 'sqlite3 adapter' do
   it 'should escape whatever' do
     assert_equal "foo''bar", db.escape("foo'bar")
   end
+
+  it 'should parse types in a case-insensitive manner' do
+    assert db.execute("create table users(id INT, name text)")
+    assert db.execute("insert into users (id, name) values (?, ?)", 1, "test")
+
+    assert_equal 1, db.execute("select * from users").first[:id]
+  end
 end

@@ -118,7 +118,7 @@ VALUE db_sqlite3_result_consume(VALUE self) {
         }
 
         for (i = 0; i < (int)ntypes; i++) {
-            if (strcmp(type, types[i].definition) == 0 || types[i].value == SWIFT_TYPE_UNKNOWN) {
+            if (strcasecmp(type, types[i].definition) == 0 || types[i].value == SWIFT_TYPE_UNKNOWN) {
                 rb_ary_push(r->types, INT2NUM(types[i].value));
                 break;
             }
@@ -183,6 +183,7 @@ VALUE db_sqlite3_result_each(VALUE self) {
 
     if (!r->rows) return Qnil;
 
+    rb_gc_register_address(&r->rows);
     for (n = 0; n < RARRAY_LEN(r->rows); n++) {
         VALUE tuple = rb_hash_new();
         VALUE row   = rb_ary_entry(r->rows, n);
@@ -190,6 +191,7 @@ VALUE db_sqlite3_result_each(VALUE self) {
             rb_hash_aset(tuple, rb_ary_entry(r->fields, f), rb_ary_entry(row, f));
         rb_yield(tuple);
     }
+    rb_gc_unregister_address(&r->rows);
 }
 
 VALUE db_sqlite3_result_selected_rows(VALUE self) {
