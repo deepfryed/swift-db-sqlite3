@@ -18,7 +18,6 @@ dbs = {
 sql = {
   create: 'create table users(id integer primary key, name text, created_at datetime)',
   insert: 'insert into users(name, created_at) values (?, ?)',
-  update: 'update users set name = ?, created_at = ? where id = ?',
   select: 'select * from users where id > ?'
 }
 
