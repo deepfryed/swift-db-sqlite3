@@ -82,6 +82,7 @@ VALUE db_sqlite3_statement_execute(int argc, VALUE *argv, VALUE self) {
     if (expect != RARRAY_LEN(bind))
         rb_raise(eSwiftArgumentError, "expected %d bind values got %d", expect, RARRAY_LEN(bind));
 
+    rb_gc_register_address(&bind);
     for (n = 0; n < expect; n++) {
         VALUE value = rb_ary_entry(bind, n);
         if (NIL_P(value))
@@ -95,6 +96,7 @@ VALUE db_sqlite3_statement_execute(int argc, VALUE *argv, VALUE self) {
     result = db_sqlite3_result_allocate(cDSR);
     db_sqlite3_result_initialize(result, self);
     db_sqlite3_result_consume(result);
+    rb_gc_unregister_address(&bind);
     return result;
 }
 
