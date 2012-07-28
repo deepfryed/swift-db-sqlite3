@@ -1,3 +1,8 @@
+== 0.1.2 (2012-07-28)
+
+* Fixed compiler warnings on i386.
+* gc guard bind parameters during execute.
+
 == 0.1.1 (2012-07-26)
 
 * Type parsing should be case insensitive.
