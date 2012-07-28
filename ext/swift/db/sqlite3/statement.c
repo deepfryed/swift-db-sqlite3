@@ -80,7 +80,7 @@ VALUE db_sqlite3_statement_execute(int argc, VALUE *argv, VALUE self) {
     rb_scan_args(argc, argv, "00*", &bind);
     expect = sqlite3_bind_parameter_count(s->s);
     if (expect != RARRAY_LEN(bind))
-        rb_raise(eSwiftArgumentError, "expected %d bind values got %d", expect, RARRAY_LEN(bind));
+        rb_raise(eSwiftArgumentError, "expected %d bind values got %d", expect, (int)RARRAY_LEN(bind));
 
     rb_gc_register_address(&bind);
     for (n = 0; n < expect; n++) {
