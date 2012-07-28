@@ -2,6 +2,7 @@
 
 * Fixed compiler warnings on i386.
 * gc guard bind parameters during execute.
+* Fixed segfault due to marking tuples as globals.
 
 == 0.1.1 (2012-07-26)
 
