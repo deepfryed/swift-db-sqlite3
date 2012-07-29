@@ -33,8 +33,8 @@ Statement* db_sqlite3_statement_handle_safe(VALUE self) {
 }
 
 void db_sqlite3_statement_mark(Statement *s) {
-    if (s && !NIL_P(s->adapter))
-        rb_gc_mark_maybe(s->adapter);
+    if (s && s->adapter)
+        rb_gc_mark(s->adapter);
 }
 
 VALUE db_sqlite3_statement_deallocate(Statement *s) {

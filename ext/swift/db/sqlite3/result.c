@@ -38,14 +38,14 @@ Result* db_sqlite3_result_handle(VALUE self) {
 
 void db_sqlite3_result_mark(Result *r) {
     if (r) {
-        if (!NIL_P(r->statement))
-            rb_gc_mark_maybe(r->statement);
-        if (!NIL_P(r->fields))
-            rb_gc_mark_maybe(r->fields);
-        if (!NIL_P(r->types))
-            rb_gc_mark_maybe(r->types);
-        if (!NIL_P(r->rows))
-            rb_gc_mark_maybe(r->rows);
+        if (r->rows)
+            rb_gc_mark(r->rows);
+        if (r->statement)
+            rb_gc_mark(r->statement);
+        if (r->fields)
+            rb_gc_mark(r->fields);
+        if (r->types)
+            rb_gc_mark(r->types);
     }
 }
 
@@ -101,7 +101,7 @@ VALUE db_sqlite3_result_consume(VALUE self) {
     };
 
     int lazy_types = 0;
-    size_t ntypes = sizeof(types) / sizeof(Type);
+    size_t ntypes  = sizeof(types) / sizeof(Type);
 
     rb_ary_clear(r->fields);
     rb_ary_clear(r->types);
@@ -181,9 +181,9 @@ VALUE db_sqlite3_result_each(VALUE self) {
     int n, f;
     Result *r = db_sqlite3_result_handle(self);
 
-    if (!r->rows) return Qnil;
+    if (!r->rows)
+        return Qnil;
 
-    rb_gc_register_address(&r->rows);
     for (n = 0; n < RARRAY_LEN(r->rows); n++) {
         VALUE tuple = rb_hash_new();
         VALUE row   = rb_ary_entry(r->rows, n);
@@ -191,7 +191,8 @@ VALUE db_sqlite3_result_each(VALUE self) {
             rb_hash_aset(tuple, rb_ary_entry(r->fields, f), rb_ary_entry(row, f));
         rb_yield(tuple);
     }
-    rb_gc_unregister_address(&r->rows);
+
+    return Qtrue;
 }
 
 VALUE db_sqlite3_result_selected_rows(VALUE self) {
