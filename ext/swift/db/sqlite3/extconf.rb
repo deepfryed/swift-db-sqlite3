@@ -18,17 +18,13 @@ lib_paths = %w(
   /sw/lib
 )
 
-def ensure_library name, lib_paths, hint = nil
-  unless find_library(name, 'main', *lib_paths)
-    puts $/, '#' * 80, hint, '#' * 80, $/ if hint
-    raise "unable to find #{name}"
-  end
-end
+uuid_inc,  uuid_lib      = dir_config('uuid',  '/usr/include/uuid', '/usr/lib')
+sqlite3_inc, sqlite3_lib = dir_config('sqlite3')
 
-find_header('sqlite3.h',   *inc_paths) or raise 'unable to locate sqlite3 headers'
-find_header('uuid/uuid.h', *inc_paths) or raise 'unable to locate uuid headers'
+find_header 'uuid/uuid.h', *inc_paths.dup.unshift(uuid_inc).compact
+find_header 'sqlite3.h',   *inc_paths.dup.unshift(sqlite3_inc).compact
 
-ensure_library 'sqlite3',  lib_paths, 'please install sqlite3 development libraries'
-ensure_library 'uuid',     lib_paths, 'please install uuid development libraries'
+find_library 'uuid',    'main', *lib_paths.dup.unshift(uuid_lib).compact
+find_library 'sqlite3', 'main', *lib_paths.dup.unshift(sqlite3_lib).compact
 
 create_makefile('swift_db_sqlite3_ext')
