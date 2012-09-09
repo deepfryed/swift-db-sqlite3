@@ -1,3 +1,7 @@
+== 0.1.3 (2012-09-09)
+
+* ensure sql is stringified before sqlite3_prepare_v2
+
 == 0.1.2 (2012-07-28)
 
 * Fixed compiler warnings on i386.

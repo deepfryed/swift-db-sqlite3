@@ -53,6 +53,7 @@ VALUE db_sqlite3_statement_allocate(VALUE klass) {
 VALUE db_sqlite3_statement_initialize(VALUE self, VALUE adapter, VALUE sql) {
     Statement *s = db_sqlite3_statement_handle(self);
 
+    sql        = TO_S(sql);
     s->s       = 0;
     s->c       = db_sqlite3_adapter_handle_safe(adapter)->connection;
     s->adapter = adapter;
