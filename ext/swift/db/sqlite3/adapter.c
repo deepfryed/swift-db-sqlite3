@@ -220,7 +220,7 @@ VALUE db_sqlite3_adapter_escape(VALUE self, VALUE text) {
 }
 
 void init_swift_db_sqlite3_adapter() {
-    cDSA = rb_define_class_under(mDB, "Sqlite3", rb_cObject);
+    cDSA = rb_define_class_under(mSwiftDB, "Sqlite3", rb_cObject);
     rb_define_alloc_func(cDSA, db_sqlite3_adapter_allocate);
 
     rb_define_method(cDSA, "initialize",  db_sqlite3_adapter_initialize,   1);

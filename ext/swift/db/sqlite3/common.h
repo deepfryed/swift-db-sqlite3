@@ -15,7 +15,7 @@
 #include <time.h>
 #include <unistd.h>
 
-extern VALUE mSwift, mDB;
+extern VALUE mSwift, mSwiftDB;
 extern VALUE cDSA, cDSS, cDSR;
 extern VALUE eSwiftError, eSwiftArgumentError, eSwiftRuntimeError, eSwiftConnectionError;
 

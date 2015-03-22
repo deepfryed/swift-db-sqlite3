@@ -7,3 +7,5 @@ tmp/
 *.gem
 benchmarks/gems/*
 benchmarks/.bundle/*
+gems/
+.bundle/

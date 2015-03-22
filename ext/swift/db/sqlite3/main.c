@@ -8,12 +8,12 @@
 #include "result.h"
 #include "datetime.h"
 
-VALUE mSwift, mDB;
+VALUE mSwift, mSwiftDB;
 VALUE eSwiftError, eSwiftArgumentError, eSwiftRuntimeError, eSwiftConnectionError;
 
 void Init_swift_db_sqlite3_ext() {
-    mSwift = rb_define_module("Swift");
-    mDB    = rb_define_module_under(mSwift, "DB");
+    mSwift   = rb_define_module("Swift");
+    mSwiftDB = rb_define_module_under(mSwift, "DB");
 
     eSwiftError           = rb_define_class_under(mSwift, "Error",           rb_eStandardError);
     eSwiftArgumentError   = rb_define_class_under(mSwift, "ArgumentError",   eSwiftError);

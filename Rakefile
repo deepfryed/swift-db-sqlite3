@@ -7,7 +7,7 @@ require 'rake/testtask'
 $rootdir = Pathname.new(__FILE__).dirname
 $gemspec = Gem::Specification.new do |s|
   s.name              = 'swift-db-sqlite3'
-  s.version           = '0.1.3'
+  s.version           = '0.1.5'
   s.date              = Date.today
   s.authors           = ['Bharanee Rathna']
   s.email             = ['deepfryed@gmail.com']
@@ -35,7 +35,7 @@ task :compile do
 end
 
 Rake::TestTask.new(:test) do |test|
-  test.libs   << 'ext' << 'lib' << 'test'
+  test.libs   << 'ext' << 'test'
   test.pattern = 'test/**/test_*.rb'
   test.verbose = true
 end

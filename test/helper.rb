@@ -1,3 +1,4 @@
+require 'bundler/setup'
 require 'minitest/autorun'
 require 'swift/db/sqlite3'
 
