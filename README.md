@@ -9,6 +9,18 @@ MRI adapter for sqlite3 for use in Swift ORM.
 * Prepared statements
 * Nested transactions
 
+## Requirements
+
+* sqlite3 development libs (libsqlite3-dev)
+* uuid development libs (uuid-dev)
+
+## Building
+
+```
+git submodule update --init
+rake
+```
+
 ## API
 
 ```
