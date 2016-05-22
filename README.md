@@ -1,6 +1,8 @@
 # Swift Sqlite3 adapter
 
-MRI adapter for sqlite3 for use in Swift ORM.
+Ruby MRI adapter for sqlite3.
+
+NOTE: This has nothing to do with Swift programming language (OSX, iOS)
 
 ## Features
 
