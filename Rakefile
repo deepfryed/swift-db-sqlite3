@@ -7,7 +7,7 @@ require 'rake/testtask'
 $rootdir = Pathname.new(__FILE__).dirname
 $gemspec = Gem::Specification.new do |s|
   s.name              = 'swift-db-sqlite3'
-  s.version           = '0.1.5'
+  s.version           = '0.1.6'
   s.date              = Date.today
   s.authors           = ['Bharanee Rathna']
   s.email             = ['deepfryed@gmail.com']
@@ -17,8 +17,9 @@ $gemspec = Gem::Specification.new do |s|
   s.files             = Dir['ext/**/*.{c,h}'] + Dir['{ext,test,lib}/**/*.rb'] + %w(README.md CHANGELOG)
   s.extensions        = %w(ext/swift/db/sqlite3/extconf.rb)
   s.require_paths     = %w(lib ext)
+  s.licenses          = %w(MIT)
 
-  s.add_development_dependency('rake')
+  s.add_development_dependency('rake', '~> 0')
 end
 
 desc 'Generate gemspec'

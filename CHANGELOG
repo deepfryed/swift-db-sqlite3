@@ -1,3 +1,7 @@
+== 0.1.6 (2018-06-16)
+
+* fixed datetime symlinks and tests.
+
 == 0.1.5 (2015-03-22)
 
 * prepared statement uuid overflow fix. 
