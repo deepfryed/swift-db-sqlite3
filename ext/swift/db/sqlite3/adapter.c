@@ -94,7 +94,7 @@ VALUE db_sqlite3_adapter_begin(int argc, VALUE *argv, VALUE self) {
     if (NIL_P(savepoint))
         savepoint = rb_uuid_string();
 
-    snprintf(command, 256, "savepoint %s", CSTRING(savepoint));
+    snprintf(command, 256, "savepoint sp%s", CSTRING(savepoint));
     sql = rb_str_new2(command);
     db_sqlite3_adapter_execute(1, &sql, self);
     a->t_nesting++;
