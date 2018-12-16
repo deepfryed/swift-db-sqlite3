@@ -117,7 +117,7 @@ VALUE db_sqlite3_adapter_commit(int argc, VALUE *argv, VALUE self) {
         a->t_nesting--;
     }
     else {
-        snprintf(command, 256, "release savepoint %s", CSTRING(savepoint));
+        snprintf(command, 256, "release savepoint sp%s", CSTRING(savepoint));
         sql = rb_str_new2(command);
         db_sqlite3_adapter_execute(1, &sql, self);
         a->t_nesting--;
@@ -141,7 +141,7 @@ VALUE db_sqlite3_adapter_rollback(int argc, VALUE *argv, VALUE self) {
         a->t_nesting--;
     }
     else {
-        snprintf(command, 256, "rollback to savepoint %s", CSTRING(savepoint));
+        snprintf(command, 256, "rollback to savepoint sp%s", CSTRING(savepoint));
         sql = rb_str_new2(command);
         db_sqlite3_adapter_execute(1, &sql, self);
         a->t_nesting--;
